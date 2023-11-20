@@ -5,7 +5,7 @@ import hamburger from '../assets/icons/hamburger.svg'
 const Navbar = () => {
   return (
     
-    <header className='padding-x py-8 absolute z-10 w-full bg-gradient-to-b from-slate-100 to-slate-300 top-0 left-0 right-0'>
+    <header className='padding-x py-8 fixed z-10 w-full bg-gradient-to-b from-slate-100 to-slate-300 top-0 left-0 right-0'>
 
     <nav className="flex justify-between items-center max-container">
       <a href="/">

@@ -33,18 +33,13 @@ const Dashboard = () => {
   return (
     <>
     
-  <section className="container mx-auto max-xl:padding-x pt-28">
-    <div className="mx-4 my-7 flex flex-1 justify-center text-3xl font-bold text-teal-400">Welcome Back, Eric</div>
+    <section className="mx-auto mt-16 max-w-screen-3xl bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div className="mx-4 mt-[9rem] flex flex-1 justify-center text-3xl font-bold text-emerald-500">Welcome Back, Eric</div>
     <div className="mb-4 flex flex-1 items-center justify-between">
-      <div className="text- mx-4 my-7 flex flex-1 justify-center text-3xl font-bold">Summary</div>
+      <div className="mx-4 my-7 flex flex-1 justify-center text-3xl font-bold">Summary</div>
 
       <button className="rounded-md border border-blue-500 px-4 py-2 text-blue-500" onClick={toggleModal}>Add Expense</button>
-      {/* <button
-        onClick={toggleModal}
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button">
-        Toggle modal
-      </button> */}
+
     </div>
 
     <div className="flex flex-1 items-center justify-between gap-7">
@@ -81,6 +76,147 @@ const Dashboard = () => {
         <div className="text-center">700</div>
       </div>
     </div>
+
+    {/* Categories */}
+
+    <div className="mt-20 flex flex-1 justify-center text-3xl font-bold">Categories</div>
+
+  {/* <!-- Restaurant --> */}
+  <div className="grid gap-10 md:grid-cols-3 mx-10">
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold text-gray-800">Restaurant</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">72%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200 dark:bg-gray-700">
+          <div className="h-2.5 w-[72%] rounded-full bg-red-400"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 720/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur border-t bg-gray-100 p-5 text-gray-400">View Expenses</div>
+    </div>
+
+    {/* <!-- grocery --> */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold text-gray-800">Grocery</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">35%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200 dark:bg-gray-700">
+          <div className="h-2.5 w-[35%] rounded-full bg-green-400"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 450/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur border-t bg-gray-100 p-5 text-gray-400">View Expenses</div>
+    </div>
+
+    {/* <!-- Clothes --> */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold text-gray-800">Clothes</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">55%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200">
+          <div className="h-2.5 w-[55%] rounded-full bg-yellow-400"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 550/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur flex justify-between border-t bg-gray-100 p-5 text-gray-400">View Expenses</div>
+    </div>
+  </div>
+
+  <div className="mt-20 flex flex-1 justify-center text-3xl font-bold">Goals Progress...</div>
+
+  <div className="grid gap-10 md:grid-cols-3 mx-10">
+    {/* <!-- Laptop --> */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      <div>
+        <img src="https://imgs.search.brave.com/HM3C9ebTnH7ldhebus7a1u62E1i3WGQd_viKD3kFOzo/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTg1/MjIzNzEwL3Bob3Rv/L2xhcHRvcC1mbG9h/dGluZy1hbmdsZWQt/b3Blbi5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9Z1VpZkph/cDRkRmtHeW5MQkFz/Q0NCdFR4eWpNNTEx/eTAtODVGLW50R092/VT0" alt="" className="" />
+      </div>
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-slate-100 p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 text-amber-700 hover:text-amber-800">
+          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+        </svg>
+
+        <h2 className="text-xl font-semibold text-gray-800">Laptop</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">20%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200">
+          <div className="h-2.5 w-[20%] rounded-full bg-rose-400"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 200/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur flex justify-between border-t bg-slate-100 p-5 text-gray-400">Amount Saved</div>
+    </div>
+
+    {/* <!-- PS5 --> */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      <div>
+        <img src="https://imgs.search.brave.com/QqCIzs1YrtCaJrdS3FJTgmrOv7tEPanpbfn9RdVR8CE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5kaXJlY3QucGxh/eXN0YXRpb24uY29t/L2lzL2ltYWdlL3Np/ZXJpYWx0by9QUzUt/ZnJvbnQtd2l0aC1k/dWFsc2Vuc2U" alt="" className="" />
+      </div>
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-slate-100 p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 text-gray-400 hover:text-gray-600">
+          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+        </svg>
+
+        <h2 className="text-xl font-semibold text-gray-800">PS 5</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">50%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200">
+          <div className="h-2.5 w-[50%] rounded-full bg-amber-300"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 500/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur flex justify-between border-t bg-slate-100 p-5 text-gray-400">Amount Saved</div>
+    </div>
+
+    {/* <!-- Switch --> */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      <div>
+        <img src="https://imgs.search.brave.com/IlyIqyohWo8LyP1spIItluW-pTVWGmuR7iPi2wmDd8o/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/MTIwMzY3ODExMjQt/ODQ3Zjg5MzliMTU0/P2l4bGliPXJiLTQu/MC4zJml4aWQ9TTN3/eE1qQTNmREI4TUh4/elpXRnlZMmg4Tlh4/OGJtbHVkR1Z1Wkc4/bE1qQnpkMmwwWTJo/OFpXNThNSHg4TUh4/OGZEQT0mdz0xMDAw/JnE9ODA.jpeg" alt="" className="" />
+      </div>
+      {/* <!-- Card Content --> */}
+      <div className="flex items-end justify-between bg-slate-100 p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 text-yellow-500 hover:text-yellow-600">
+          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+        </svg>
+
+        <h2 className="text-xl font-semibold text-gray-800">Switch</h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">90%</span>
+      </div>
+      {/* <!-- Progress Bar with Tooltip --> */}
+      <div className="group relative">
+        <div className="h-2.5 w-full cursor-pointer rounded-full bg-gray-200">
+          <div className="h-2.5 w-[90%] rounded-full bg-lime-400"></div>
+        </div>
+        <div className="absolute right-[2%] mt-5 hidden rounded-xl bg-gray-500 bg-opacity-50 p-1 text-center text-white group-hover:block">$ 900/1000</div>
+      </div>
+      {/* <!-- Card Footer --> */}
+      <div className="cur flex justify-between border-t bg-slate-100 p-5 text-gray-400">Amount Saved</div>
+    </div>
+  </div>
+
+
   </section>
 
 {/* Modal toggle */}
@@ -92,14 +228,12 @@ const Dashboard = () => {
     {/* OverlLay */}
     <div
       onClick={toggleModal}
-      className="fixed top-0 right-0 left-0 bottom-0 bg-black opacity-50"
-    ></div>
+      className="fixed top-0 right-0 left-0 bottom-0 bg-black opacity-50"></div>
 
   <div
     tabIndex="-1"
     aria-hidden="true"
-    className="fixed z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full overflow-y-auto overflow-x-hidden"
-  >
+    className="fixed z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full overflow-y-auto overflow-x-hidden">
 
     <div className="relative p-4 w-full max-w-md max-h-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
       {/* Modal content */}
@@ -112,27 +246,23 @@ const Dashboard = () => {
           <button
             type="button"
             onClick={toggleModal}
-            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-          >
+            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
             <svg
               className="w-3 h-3"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 14 14"
-            >
+              viewBox="0 0 14 14">
               <path
                 stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-              />
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
             </svg>
           </button>
         </div>
         {/* Modal body */}
-                {/* ... (rest of the form) */}
 
         <form onSubmit={handleSubmit} className="p-4 md:p-5">
         <div className="grid gap-4 mb-4 grid-cols-2">
