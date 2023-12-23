@@ -1,11 +1,13 @@
 import Logo from "../assets/images/logo.png"
 import {navLinks} from "../constants/index"
 import hamburger from '../assets/icons/hamburger.svg'
+import Icon from './Icon';
+
 
 const Navbar = () => {
   return (
     
-    <header className='padding-x py-8 fixed z-10 w-full bg-gradient-to-b from-slate-100 to-slate-300 top-0 left-0 right-0'>
+    <header className='padding-x py-8 reltive z-10 w-full bg-gradient-to-b from-slate-100 to-slate-300 top-0 left-0 right-0'>
 
     <nav className="flex justify-between items-center max-container">
       <a href="/">
@@ -17,8 +19,12 @@ const Navbar = () => {
 
     {
       navLinks.map((item) =>(
+        
         <li key= {item.label}>
-          <a href = {item.href} className="font-montserrat leading-normal text-lg text-slate-gray">
+          
+          <a href = {item.href} className="font-montserrat leading-normal text-lg text-slate-gray flex gap-2">
+
+          <Icon name={item.iconName} color={item.iconColor} size={item.iconSize}/>
 
           {item.label}
 
