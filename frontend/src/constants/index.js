@@ -4,6 +4,13 @@ export const navLinks = [
     { href: "learn", label: "Learn",iconName: "BookOpenText", iconColor: "#22c55e", iconSize: 24},
 ];
 
+export const categories = [
+  { title: "Grocery", progress:80},
+  { title: "Bills & Utilities", progress:85},
+  { title: "Other", progress:80},
+];
+
+
 export const questions = [
     { id: 1, question: 'What is the capital of France?', options: ['Berlin', 'Madrid', 'Paris', 'Rome'], correctAnswer: 'Paris' },
     { id: 2, question: 'What is the capital of India?', options: ['Berlin', 'Delhi', 'Paris', 'Rome'], correctAnswer: 'Delhi' },
