@@ -36,9 +36,10 @@ const Navbar = () => {
 
     </ul>
     <button className="flex max-lg:hidden wide:mr-24 justify-center items-center gap-2 px-7 py-4 border font-['Inter'] font-medium text-lg leading-normal bg-teal-700 text-white rounded-full border-teal-600">
-    <a href='/'>Log in</a>
+    {/* <a href='/'>Log in</a>
       <span>/</span>
-      <a href='/'>Sign Up</a>
+      <a href='/'>Sign Up</a> */}
+      Eric Paul
     </button>
 
     <div className='hidden max-lg:block'>

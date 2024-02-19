@@ -10,8 +10,15 @@ const Dashboard = () => {
 
   const [isExpenseView, setIsExpenseView] = useState(false);
 
-  const toggleModal = (category, isExpenseView = false) => {
+  const [addIncome, setaddIncome] = useState(false);
+
+  const [isIncomeView, setIsIncomeView] = useState(false);
+
+
+  const toggleModal = (category, isExpenseView = false, addIncome=false, isIncomeView=false) => {
     setIsExpenseView(isExpenseView);
+    setaddIncome(addIncome);
+    setIsIncomeView(isIncomeView);
     setModalOpen(!isModalOpen);
     setSelectedCategory(category);
   };
@@ -31,7 +38,7 @@ const Dashboard = () => {
           {summary.map((item) => (
             <div
               key={item.title}
-              className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-lg"
+              className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-xl min-h-[17vh]"
             >
               <div key={item.iconName} className="flex items-center gap-2">
                 {item.iconName === "TrendingUp" && (
@@ -46,10 +53,29 @@ const Dashboard = () => {
                 <div className="text-xl">{item.title}</div>
               </div>
               <div className="text-center text-xl">{item.amount}</div>
+              {
+                item.title == "Income" && (
+                  <div className="flex flex-1 items-center justify-between gap-24">
+                  <div
+                      className="text-blue-500 cursor-pointer hover:text-blue-700 "
+                      onClick={() => toggleModal(null,false,true,false)}
+                    >
+                      Add Income
+                    </div>
+                    <div
+                      className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                      onClick={() => toggleModal(null,false,false,true)}
+                    >
+                      View Income
+                    </div>
+                  </div>
+
+                )
+              }
             </div>
           ))}
 
-          <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500">
+          <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[17vh]">
             <div className="flex items-center gap-2">
               <PiggyBank className="text-pink-500 font-bold" />
               <div className="text-xl">Savings</div>
@@ -103,18 +129,18 @@ const Dashboard = () => {
               </div>
               {/* <!-- Card Footer --> */}
               <div className="flex flex-1 items-center justify-between">
+              <div
+                  className="bg-gray-100 p-4 text-blue-500 cursor-pointer hover:text-blue-700 "
+                  onClick={() => toggleModal(category.title,false,false,false)}
+                >
+                  Add Expense
+                </div>
                 <div
-                  className="bg-gray-100 p-5 text-gray-500 hover:text-gray-700 cursor-pointer"
-                  onClick={() => toggleModal(category.title, true)}
+                  className="bg-gray-100 p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+                  onClick={() => toggleModal(category.title, true, false, false)}
                 >
                   View Expenses
                 </div>
-                <button
-                  className="bg-gray-100 p-5 text-blue-500 cursor-pointer hover:text-blue-700 "
-                  onClick={() => toggleModal(category.title)}
-                >
-                  Add Expense
-                </button>
               </div>
             </div>
           ))}
@@ -168,7 +194,7 @@ const Dashboard = () => {
         <Modal
           selectedCategory={selectedCategory}
           onClose={toggleModal}
-          isExpenseView={isExpenseView}
+          isExpenseView={isExpenseView} addIncome={addIncome} isIncomeView={isIncomeView}
         />
       )}
     </>
