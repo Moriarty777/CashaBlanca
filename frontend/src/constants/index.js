@@ -28,38 +28,10 @@ export const categories = [
   { title: "Other", progress: 72 },
 ];
 
-export const expenseData = [
-  {
-    name: 'Walmart',
-    amount: '$50',
-    date: '2023-08-01',
-    category:'Grocery' 
-  },
-  {
-    name: 'Aldi',
-    amount: '$20',
-    date: '2023-08-02',
-    category:'Grocery' 
-  },
-  {
-    name: 'Wifi',
-    amount: '$40',
-    date: '2023-07-01',
-    category:'Bills & Utilities' 
-  },
-  {
-    name: 'Korean BBQ',
-    amount: '$30',
-    date: '2023-08-04',
-    category:'Other' 
-  },
-];
-
-
 export const summary = [
-  { title: "Income",iconName:'TrendingUp', amount: 1000 },
-  { title: "Expense",iconName:'TrendingDown', amount: 300 },
-  { title: "Balance",iconName:'Scale', amount: 700 },
+  { title: "Income", iconName: "TrendingUp", amount: 1000 },
+  { title: "Expense", iconName: "TrendingDown", amount: 300 },
+  { title: "Balance", iconName: "Scale", amount: 700 },
 ];
 
 export const questions = [

@@ -1,26 +1,356 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PiggyBank, TrendingUp, TrendingDown, Scale } from "lucide-react";
 import Modal from "../components/Modal";
 import { categories, summary } from "../constants/index";
 
+const SummaryCard = ({ item, onOpenModal }) => {
+  // Implement logic and JSX for the summary card based on item props
+  const icon = {
+    TrendingUp: <TrendingUp className="text-green-600 font-bold" />,
+    TrendingDown: <TrendingDown className="text-red-600 font-bold" />,
+    Scale: <Scale className="text-teal-600 font-bold" />,
+  };
+
+  return (
+    <div
+      key={item.title}
+      className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-xl min-h-[17vh]"
+    >
+      <div key={item.iconName} className="flex items-center gap-2">
+        {icon[item.iconName]}
+        <div className="text-xl">{item.title}</div>
+      </div>
+      <div className="text-center text-xl">{item.amount}</div>
+      {item.title === "Income" && (
+        <div className="flex flex-1 items-center justify-between gap-24">
+          <div
+            className="text-blue-500 cursor-pointer hover:text-blue-700"
+            onClick={() => onOpenModal(null, "addIncome")} // Pass category as null for income
+          >
+            Add Income
+          </div>
+          <div
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
+            onClick={() => onOpenModal(null, "viewIncome")} // Pass category as null for income
+          >
+            View Income
+          </div>
+        </div>
+      )}
+      {item.title === "Expense" && (
+        <div className="flex flex-1 items-center justify-between gap-24">
+          <div
+            className="text-gray-500 hover:text-gray-700 cursor-pointer"
+            onClick={() => onOpenModal(null, "viewExpense")} // Pass category as null for expense
+          >
+            View Expense
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SavingsCard = () => {
+  // Implement logic and JSX for the savings card
+  return (
+    <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[17vh]">
+      <div className="flex items-center gap-2">
+        <PiggyBank className="text-pink-500 font-bold" />
+        <div className="text-xl">Savings</div>
+      </div>
+      <div className="text-center text-white font-bold text-xl">1600</div>
+      <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-150 scale-0 group-hover:scale-100">
+        <p className="text-sm">Laptop - $200 Saved</p>
+        <p className="text-sm">PS5 - $500 Saved</p>
+        <p className="text-sm">Switch - $900 Saved</p>
+      </div>
+    </div>
+  );
+};
+
+const CategoryCard = ({ category, onOpenModal }) => {
+  // Implement logic and JSX for the category card based on category props
+  const progressColor =
+    category.progress < 50
+      ? "bg-green-400"
+      : category.progress >= 50 && category.progress < 70
+      ? "bg-yellow-400"
+      : "bg-red-400";
+
+  return (
+    <div
+      key={category.title}
+      className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg"
+    >
+      {/* */}
+      <div className="flex items-end justify-between bg-gray-50 p-4">
+        <h2 className="text-xl font-semibold text-gray-800">
+          {category.title}
+        </h2>
+        <span className="text-sm font-medium text-blue-700 dark:text-white">
+          {category.progress}%
+        </span>
+      </div>
+      {/* Progress Bar */}
+      <div className="relative">
+        <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+          <div
+            className={`h-2.5 w-[${category.progress}%] rounded-full ${progressColor}`}
+          ></div>
+        </div>
+      </div>
+      {/* Card Footer */}
+      <div className="flex flex-1 items-center justify-between">
+        <div
+          className="bg-gray-100 p-4 text-blue-500 cursor-pointer hover:text-blue-700"
+          onClick={() => onOpenModal(category.title, "addExpense")}
+        >
+          Add Expense
+        </div>
+        <div
+          className="bg-gray-100 p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+          onClick={() => onOpenModal(category.title, "viewExpense")} // Example for view expense functionality
+        >
+          View Expenses
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    selectedCategory: "",
+    modalType: "", // "addExpense", "addIncome", "viewIncome", "viewExpense", "editIncome","editExpense"
+  });
 
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [formData, setFormData] = useState({});
+  const [fetchedData, setFetchedData] = useState({});
 
-  const [isExpenseView, setIsExpenseView] = useState(false);
+  const [editItemId, setEditItemId] = useState();
 
-  const [addIncome, setaddIncome] = useState(false);
+  const toggleModal = (category, modalType) => {
+    setModalState({
+      isOpen: !modalState.isOpen,
+      selectedCategory: category,
+      modalType: modalType,
+    });
+  };
 
-  const [isIncomeView, setIsIncomeView] = useState(false);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
+  // FETCH DATA
+  const fetchData = async () => {
+    try {
+      let url;
+      if (modalState.modalType === "viewExpense") {
+        url = modalState.selectedCategory
+          ? `http://localhost:3000/expenses/${modalState.selectedCategory}`
+          : "http://localhost:3000/expenses";
+      } else if (modalState.modalType === "viewIncome") {
+        url = "http://localhost:3000/income";
+      }
 
-  const toggleModal = (category, isExpenseView = false, addIncome=false, isIncomeView=false) => {
-    setIsExpenseView(isExpenseView);
-    setaddIncome(addIncome);
-    setIsIncomeView(isIncomeView);
-    setModalOpen(!isModalOpen);
-    setSelectedCategory(category);
+      const response = await fetch(url);
+      if (response.ok) {
+        const fetchedData = await response.json();
+        setFetchedData(fetchedData);
+        setFormData(fetchedData);
+        console.log(fetchedData, "Fetched Data");
+      } else {
+        console.error("Failed to fetch data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    // Call fetchData only for "viewIncome" or "viewExpense"
+    if (
+      modalState.modalType === "viewIncome" ||
+      modalState.modalType === "viewExpense"
+    ) {
+      fetchData();
+    }
+  }, [modalState.modalType, modalState.selectedCategory]);
+
+  // SUBMIT DATA
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission behavior
+
+    // Validate the incoming data
+    if (modalState.modalType === "addIncome") {
+      if (!formData.source || !formData.amount) {
+        console.error(
+          "Income data is missing. Source and amount are required."
+        );
+        return; // Prevent further execution for invalid income data
+      }
+    } else if (modalState.modalType === "addExpense") {
+      if (!formData.amount || !formData.name || !modalState.selectedCategory) {
+        console.error(
+          "Expense data is missing. Name, amount, and category are required."
+        );
+        return; // Prevent further execution for invalid expense data
+      }
+      if (isNaN(parseFloat(formData.amount)) || !isFinite(formData.amount)) {
+        console.error("Amount must be a valid number.");
+        return; // Prevent further execution if amount is invalid
+      }
+    }
+
+    try {
+      // Prepare the fetch request based on modalType
+      let url = "";
+      let requestBody = {};
+      let method = "";
+
+      console.log(formData, "inside submit", modalState.selectedCategory);
+
+      if (
+        modalState.modalType === "addIncome" ||
+        modalState.modalType === "addExpense"
+      ) {
+        url = `http://localhost:3000/${
+          modalState.modalType === "addIncome" ? "income" : "expenses"
+        }`;
+
+        requestBody =
+          modalState.modalType === "addIncome"
+            ? JSON.stringify({
+                source: formData.source,
+                amount: formData.amount,
+              })
+            : JSON.stringify({
+                name: formData.name,
+                amount: formData.amount,
+                category: modalState.selectedCategory,
+              });
+        method = "POST";
+      } else if (
+        modalState.modalType === "viewIncome" ||
+        modalState.modalType === "viewExpense"
+      ) {
+        url = `http://localhost:3000/${
+          modalState.modalType === "viewIncome" ? "income" : "expenses"
+        }/${editItemId}`;
+        requestBody = JSON.stringify({
+          name: formData.name,
+          amount: formData.amount,
+          category: formData.category,
+        });
+        method = "PUT";
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: requestBody,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(
+          `${modalState.modalType} ${
+            method === "POST" ? "added" : "updated"
+          } successfully:`,
+          data
+        );
+
+        // Close modal and reset formData
+        toggleModal("", "");
+        setFormData({});
+        setEditItemId();
+      } else {
+        console.error(
+          `Failed to ${method === "POST" ? "add" : "update"} ${
+            modalState.modalType
+          }:`,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Error adding", modalState.modalType, ":", error);
+    }
+  };
+  useEffect(() => {
+    // Only add event listener when modal is open and modalType is "addIncome" or "addExpense"
+    if (
+      modalState.isOpen &&
+      (modalState.modalType === "addIncome" ||
+        modalState.modalType === "addExpense")
+    ) {
+      // window.addEventListener("submit", handleSubmit);
+      handleSubmit();
+    } else if (
+      modalState.isOpen &&
+      (modalState.modalType === "viewIncome" ||
+        modalState.modalType === "viewExpense")
+    ) {
+      // window.addEventListener("submit", handleSubmit);
+      handleSubmit();
+    }
+  }, [modalState.isOpen, modalState.modalType]); // Dependency array
+
+  // DELETE DATA
+  const handleDelete = async (data) => {
+    try {
+      const baseUrl = `http://localhost:3000`;
+      const endpoint = data.type === "income" ? "/income" : "/expenses";
+      const url = `${baseUrl}${endpoint}/${data.id}`;
+
+      console.log(data, "Handle Delete", modalState.modalType);
+
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log(`Item deleted successfully`);
+
+        if (modalState.modalType === "viewIncome") {
+          setFetchedData((prevData) => ({
+            ...prevData,
+            income: prevData.income.filter((item) => item.id !== data.id),
+          }));
+        } else if (modalState.modalType === "viewExpense") {
+          setFetchedData((prevData) => ({
+            ...prevData,
+            expenses: prevData.expenses.filter((item) => item.id !== data.id),
+          }));
+        }
+      } else {
+        console.error(`Failed to delete ${data.type}:`, response.statusText);
+      }
+    } catch (error) {
+      console.error(`Error deleting ${data.type}:`, error);
+    }
+  };
+
+  const handleEdit = (data) => {
+    setEditItemId(data.id); // Set the ID of the item being edited
+
+    // Prepare form data based on modal type (editIncome or editExpense)
+    let editData = {};
+    if (modalState.modalType === "viewIncome") {
+      editData = { source: data.source, amount: data.amount };
+    } else if (modalState.modalType === "viewExpense") {
+      editData = {
+        name: data.name,
+        amount: data.amount,
+        category: data.category,
+      };
+    }
+
+    setFormData(editData); // Set form data with appropriate fields based on type
   };
 
   return (
@@ -36,57 +366,13 @@ const Dashboard = () => {
 
         <div className="flex flex-1 items-center justify-between gap-7">
           {summary.map((item) => (
-            <div
+            <SummaryCard
               key={item.title}
-              className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-xl min-h-[17vh]"
-            >
-              <div key={item.iconName} className="flex items-center gap-2">
-                {item.iconName === "TrendingUp" && (
-                  <TrendingUp className="text-green-600 font-bold" />
-                )}
-                {item.iconName === "TrendingDown" && (
-                  <TrendingDown className="text-red-600 font-bold" />
-                )}
-                {item.iconName === "Scale" && (
-                  <Scale className="text-teal-600 font-bold" />
-                )}
-                <div className="text-xl">{item.title}</div>
-              </div>
-              <div className="text-center text-xl">{item.amount}</div>
-              {
-                item.title == "Income" && (
-                  <div className="flex flex-1 items-center justify-between gap-24">
-                  <div
-                      className="text-blue-500 cursor-pointer hover:text-blue-700 "
-                      onClick={() => toggleModal(null,false,true,false)}
-                    >
-                      Add Income
-                    </div>
-                    <div
-                      className="text-gray-500 hover:text-gray-700 cursor-pointer"
-                      onClick={() => toggleModal(null,false,false,true)}
-                    >
-                      View Income
-                    </div>
-                  </div>
-
-                )
-              }
-            </div>
+              item={item}
+              onOpenModal={toggleModal}
+            />
           ))}
-
-          <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[17vh]">
-            <div className="flex items-center gap-2">
-              <PiggyBank className="text-pink-500 font-bold" />
-              <div className="text-xl">Savings</div>
-            </div>
-            <div className="text-center text-white font-bold text-xl">1600</div>
-            <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-150 scale-0 group-hover:scale-100">
-              <p className="text-sm">Laptop - $200 Saved</p>
-              <p className="text-sm">PS5 - $500 Saved</p>
-              <p className="text-sm">Switch - $900 Saved</p>
-            </div>
-          </div>
+          <SavingsCard />
         </div>
 
         {/* Categories */}
@@ -99,50 +385,11 @@ const Dashboard = () => {
 
         <div className="grid gap-10 md:grid-cols-3 mx-10">
           {categories.map((category) => (
-            <div
+            <CategoryCard
               key={category.title}
-              className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg"
-            >
-              {/* <!-- Card Content --> */}
-              <div className="flex items-end justify-between bg-gray-50 p-4">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {category.title}
-                </h2>
-                <span className="text-sm font-medium text-blue-700 dark:text-white">
-                  {category.progress}%
-                </span>
-              </div>
-              {/* <!-- Progress Bar --> */}
-              <div className="relative">
-                <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                  <div
-                    className={`h-2.5 w-[72%] rounded-full ${
-                      category.progress < 50
-                        ? "bg-green-400"
-                        : category.progress >= 50 && category.progress < 70
-                        ? "bg-yellow-400"
-                        : "bg-red-400"
-                    }`}
-                  ></div>
-                  {/* ${Number(category.progress)} */}
-                </div>
-              </div>
-              {/* <!-- Card Footer --> */}
-              <div className="flex flex-1 items-center justify-between">
-              <div
-                  className="bg-gray-100 p-4 text-blue-500 cursor-pointer hover:text-blue-700 "
-                  onClick={() => toggleModal(category.title,false,false,false)}
-                >
-                  Add Expense
-                </div>
-                <div
-                  className="bg-gray-100 p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-                  onClick={() => toggleModal(category.title, true, false, false)}
-                >
-                  View Expenses
-                </div>
-              </div>
-            </div>
+              category={category}
+              onOpenModal={toggleModal}
+            />
           ))}
         </div>
 
@@ -151,50 +398,54 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-1 justify-center items-center mx-10">
-          {/* <!-- Laptop --> */}
           <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
             <div>
               <img src="https://shorturl.at/ctM27" alt="" className="" />
             </div>
-            {/* <!-- Card Content --> */}
+
             <div className="flex items-end justify-between bg-slate-100 p-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="h-7 w-7 text-amber-700 hover:text-amber-800"
+                className="h-7 w-7 text-green-500"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                  clipRule="evenodd"
-                />
+                <path d="M9 17a1 1 0 000-2h6a1 1 0 000 2H9zM17 1a1 1 0 011 1v2h-2V1zM10 15a1 1 0 01-1-1H4a1 1 0 011-1h6a1 1 0 011 1zM17 11a1 1 0 011 1v2h-2v-2z" />
               </svg>
-
+              <h2 className="text-xl font-semibold text-gray-800">
+                Travel Fund
+              </h2>
               <span className="text-sm font-medium text-blue-700 dark:text-white">
-                20%
+                75%
               </span>
             </div>
-            {/* <!-- Progress Bar with Tooltip --> */}
+            {/* Progress Bar */}
             <div className="relative">
-              <div className="h-2.5 w-full rounded-full bg-gray-200">
-                <div className="h-2.5 w-[20%] rounded-full bg-rose-400"></div>
+              <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                <div className="h-2.5 w-[75%] rounded-full bg-green-400"></div>
               </div>
             </div>
-            {/* <!-- Card Footer --> */}
-            <div className="flex justify-between bg-slate-100 p-5 text-gray-400"></div>
+            {/* Placeholder for goal details */}
+            <div className="flex flex-col px-4 py-2 gap-2">
+              <p className="text-gray-600 text-sm">Target: $5000</p>
+              <p className="text-gray-600 text-sm">Saved: $3750</p>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Modal toggle */}
-
-      {/* Main modal */}
-      {isModalOpen && (
+      {/* Pass modal state and toggleModal function to Modal component */}
+      {modalState.isOpen && (
         <Modal
-          selectedCategory={selectedCategory}
-          onClose={toggleModal}
-          isExpenseView={isExpenseView} addIncome={addIncome} isIncomeView={isIncomeView}
+          onClose={() => toggleModal("", "")} // Reset modal state on close
+          selectedCategory={modalState.selectedCategory}
+          modalType={modalState.modalType}
+          handleSubmit={handleSubmit}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          handleChange={handleChange}
+          fetchedData={fetchedData}
+          formData={formData}
+          editItemId={editItemId}
         />
       )}
     </>

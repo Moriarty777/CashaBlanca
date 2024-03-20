@@ -19,57 +19,63 @@ client.connect();
 app.use(cors());
 app.use(express.json());
 
-// INCOME 
+// INCOME
 // GET all incomes
-app.get('/incomes', async (req, res) => {
+app.get("/income", async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM income');
+    const { rows } = await client.query("SELECT * FROM income");
     res.json(rows);
   } catch (error) {
-    console.error('Error fetching incomes:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching incomes:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 // POST a new income
-app.post('/incomes', async (req, res) => {
+app.post("/income", async (req, res) => {
   const { source, amount } = req.body;
   try {
-    const { rows } = await pool.query('INSERT INTO income (source, amount) VALUES ($1, $2) RETURNING *', [source, amount]);
+    const { rows } = await client.query(
+      "INSERT INTO income (source, amount) VALUES ($1, $2) RETURNING *",
+      [source, amount]
+    );
     res.status(201).json(rows[0]);
   } catch (error) {
-    console.error('Error creating income:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error creating income:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 // PUT update an existing income by ID
-app.put('/incomes/:id', async (req, res) => {
+app.put("/income/:id", async (req, res) => {
   const id = req.params.id;
   const { source, amount } = req.body;
   try {
-    const { rows } = await pool.query('UPDATE income SET source = $1, amount = $2 WHERE id = $3 RETURNING *', [source, amount, id]);
+    const { rows } = await client.query(
+      "UPDATE income SET source = $1, amount = $2 WHERE id = $3 RETURNING *",
+      [source, amount, id]
+    );
     res.json(rows[0]);
   } catch (error) {
-    console.error('Error updating income:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error updating income:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 // DELETE an existing income by ID
-app.delete('/incomes/:id', async (req, res) => {
+app.delete("/income/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const { rows } = await pool.query('DELETE FROM income WHERE id = $1 RETURNING *', [id]);
+    const { rows } = await client.query(
+      "DELETE FROM income WHERE id = $1 RETURNING *",
+      [id]
+    );
     res.json(rows[0]);
   } catch (error) {
-    console.error('Error deleting income:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error deleting income:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
-
 
 // EXPENSES
 // GET Expenses by Category
@@ -91,26 +97,42 @@ app.get("/expenses/:category", async (req, res) => {
   }
 });
 
+// GET all Expenses
+app.get("/expenses", async (req, res) => {
+  try {
+    // Query the database to retrieve all expenses
+    const result = await client.query("SELECT * FROM expenses");
+
+    // Send the retrieved expenses as a JSON response
+    res.status(200).json({ expenses: result.rows });
+  } catch (error) {
+    console.error("Error retrieving expenses:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Create Expense
 app.post("/expenses", async (req, res) => {
   try {
     // Extract expense data from request body
-    const { name, price, category } = req.body;
+    const { name, amount, category } = req.body;
 
     // Validate the incoming data
-    if (!name || !price || !category) {
+    if (!name || !amount || !category) {
       return res
         .status(400)
-        .json({ message: "Name, price, and category are required." });
+        .json({ message: "Name, amount, and category are required." });
     }
-    if (isNaN(parseFloat(price)) || !isFinite(price)) {
-      return res.status(400).json({ message: "Price must be a valid number." });
+    if (isNaN(parseFloat(amount)) || !isFinite(amount)) {
+      return res
+        .status(400)
+        .json({ message: "Amount must be a valid number." });
     }
 
     // Insert the expense data into the database
     const result = await client.query(
-      "INSERT INTO expenses (name, price, category) VALUES ($1, $2, $3) RETURNING *",
-      [name, price, category]
+      "INSERT INTO expenses (name, amount, category) VALUES ($1, $2, $3) RETURNING *",
+      [name, amount, category]
     );
 
     // Send a success response back to the client
@@ -128,20 +150,24 @@ app.post("/expenses", async (req, res) => {
 app.put("/expenses/:id", async (req, res) => {
   try {
     const { id } = req.params; // Extract expense ID from request parameters
-    const { name, price, category } = req.body; // Extract updated data from request body
+    const { name, amount, category } = req.body; // Extract updated data from request body
 
     // Validate the incoming data
-    if (!name || !price || !category) {
-      return res.status(400).json({ message: "Name, price, and category are required." });
+    if (!name || !amount || !category) {
+      return res
+        .status(400)
+        .json({ message: "Name, amount, and category are required." });
     }
-    if (isNaN(parseFloat(price)) || !isFinite(price)) {
-      return res.status(400).json({ message: "Price must be a valid number." });
+    if (isNaN(parseFloat(amount)) || !isFinite(amount)) {
+      return res
+        .status(400)
+        .json({ message: "Amount must be a valid number." });
     }
 
     // Update the expense data in the database
     const result = await client.query(
-      "UPDATE expenses SET name = $1, price = $2, category = $3 WHERE id = $4 RETURNING *",
-      [name, price, category, id]
+      "UPDATE expenses SET name = $1, amount = $2, category = $3 WHERE id = $4 RETURNING *",
+      [name, amount, category, id]
     );
 
     // Check if the expense was found and updated
@@ -185,7 +211,6 @@ app.delete("/expenses/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
