@@ -19,8 +19,6 @@ const Modal = ({
     income: Array.isArray(fetchedData.income) && fetchedData.income.length > 0,
   };
 
-  console.log(formData, "Form Data Modal");
-
   return (
     <>
       <div>
@@ -196,6 +194,131 @@ const Modal = ({
                   >
                     <Plus className="text-white font-semibold" />
                     Add Expense
+                  </button>
+                </form>
+              )}
+
+              {/* View Income */}
+              {modalType === "viewIncome" ? (
+                isDataValid.income ? (
+                  <div className="p-4 md:p-5">
+                    {fetchedData.income.map((item) => (
+                      <div key={item.id} className="mb-4">
+                        <ul className="list-none p-0 m-0">
+                          <li className="flex justify-between items-center">
+                            <div className="text-lg font-semibold">
+                              {editItemId === item.id ? (
+                                <input
+                                  type="text"
+                                  name="source"
+                                  value={formData.source || ""}
+                                  onChange={handleChange}
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                  placeholder="Type product name"
+                                  required
+                                />
+                              ) : (
+                                item.source
+                              )}
+                            </div>
+                            <div className="flex gap-2 items-center">
+                              <div className="text-gray-600 mr-4">
+                                {editItemId === item.id ? (
+                                  <input
+                                    type="number"
+                                    name="amount"
+                                    value={formData.amount || ""}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="$200"
+                                    required
+                                  />
+                                ) : (
+                                  `${item.amount} $`
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                className="text-blue-700 hover:underline"
+                                onClick={() => handleEdit(item)}
+                              >
+                                <Pencil />
+                              </button>
+                              <button
+                                type="button"
+                                className="text-red-700 hover:underline"
+                                onClick={() => handleDelete(item)}
+                              >
+                                <Trash2 />
+                              </button>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    ))}
+                    {editItemId && (
+                      <button
+                        type="submit"
+                        className="text-white inline-flex items-center bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={handleSubmit}
+                      >
+                        Done
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-4 md:p-5">
+                    <p>No Income found.</p>
+                  </div>
+                )
+              ) : null}
+
+              {/* Add Income */}
+              {modalType === "addIncome" && (
+                // Add Expense
+                <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                  <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="col-span-2">
+                      <label
+                        htmlFor="source"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Source
+                      </label>
+                      <input
+                        type="text"
+                        name="source"
+                        id="source"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Type product name"
+                        required
+                      />
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <label
+                        htmlFor="amount"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="amount"
+                        id="amount"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="$200"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    className="text-white inline-flex items-center bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700"
+                  >
+                    <Plus className="text-white font-semibold" />
+                    Add Income
                   </button>
                 </form>
               )}

@@ -20,13 +20,14 @@ app.use(cors());
 app.use(express.json());
 
 // INCOME
+
 // GET all incomes
 app.get("/income", async (req, res) => {
   try {
-    const { rows } = await client.query("SELECT * FROM income");
-    res.json(rows);
+    const result = await client.query("SELECT * FROM income");
+    res.status(200).json({ income: result.rows });
   } catch (error) {
-    console.error("Error fetching incomes:", error);
+    console.error("Error fetching incomes:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 });

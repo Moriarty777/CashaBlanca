@@ -3,7 +3,7 @@ import { PiggyBank, TrendingUp, TrendingDown, Scale } from "lucide-react";
 import Modal from "../components/Modal";
 import { categories, summary } from "../constants/index";
 
-const SummaryCard = ({ item, onOpenModal }) => {
+const SummaryCard = ({ item, onOpenModal, totalIncome, totalExpense }) => {
   // Implement logic and JSX for the summary card based on item props
   const icon = {
     TrendingUp: <TrendingUp className="text-green-600 font-bold" />,
@@ -11,16 +11,24 @@ const SummaryCard = ({ item, onOpenModal }) => {
     Scale: <Scale className="text-teal-600 font-bold" />,
   };
 
+  console.log(totalIncome, totalExpense, "Summary Card");
+
   return (
     <div
       key={item.title}
-      className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-xl min-h-[17vh]"
+      className="flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-slate-200 p-4 text-lg font-bold shadow-xl min-h-[24vh]"
     >
       <div key={item.iconName} className="flex items-center gap-2">
         {icon[item.iconName]}
         <div className="text-xl">{item.title}</div>
       </div>
-      <div className="text-center text-xl">{item.amount}</div>
+      <div className="text-center text-xl mt-4">
+        {item.title === "Income"
+          ? totalIncome
+          : item.title === "Expense"
+          ? totalExpense
+          : String(totalIncome - totalExpense)}
+      </div>
       {item.title === "Income" && (
         <div className="flex flex-1 items-center justify-between gap-24">
           <div
@@ -54,7 +62,7 @@ const SummaryCard = ({ item, onOpenModal }) => {
 const SavingsCard = () => {
   // Implement logic and JSX for the savings card
   return (
-    <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[17vh]">
+    <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[24vh]">
       <div className="flex items-center gap-2">
         <PiggyBank className="text-pink-500 font-bold" />
         <div className="text-xl">Savings</div>
@@ -69,48 +77,66 @@ const SavingsCard = () => {
   );
 };
 
-const CategoryCard = ({ category, onOpenModal }) => {
-  // Implement logic and JSX for the category card based on category props
-  const progressColor =
-    category.progress < 50
-      ? "bg-green-400"
-      : category.progress >= 50 && category.progress < 70
-      ? "bg-yellow-400"
-      : "bg-red-400";
+const CategoryCard = ({ category, onOpenModal, fetchedData }) => {
+  // Calculate total amount spent for the category
+  const categoryExpenses =
+    Array.isArray(fetchedData) && fetchedData.length > 0
+      ? fetchedData.filter((expense) => expense.category === category.title)
+      : null;
+
+  const totalAmountSpent =
+    Array.isArray(categoryExpenses) && categoryExpenses.length > 0
+      ? categoryExpenses.reduce(
+          (total, expense) => total + parseFloat(expense.amount),
+          0
+        )
+      : 0;
+
+  // Calculate progress percentage
+  const totalBudget = 100; // Assume total budget
+  const progress = Math.round((totalAmountSpent / totalBudget) * 100);
+
+  // Determine progress color based on progress value
+  const getProgressColor = (progress) => {
+    if (progress < 50) {
+      return "bg-green-400";
+    } else if (progress < 70) {
+      return "bg-yellow-400";
+    } else {
+      return "bg-red-400";
+    }
+  };
+
+  const progressColor = getProgressColor(progress);
 
   return (
-    <div
-      key={category.title}
-      className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg"
-    >
-      {/* */}
+    <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
       <div className="flex items-end justify-between bg-gray-50 p-4">
         <h2 className="text-xl font-semibold text-gray-800">
           {category.title}
         </h2>
         <span className="text-sm font-medium text-blue-700 dark:text-white">
-          {category.progress}%
+          {progress}%
         </span>
       </div>
       {/* Progress Bar */}
-      <div className="relative">
-        <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-          <div
-            className={`h-2.5 w-[${category.progress}%] rounded-full ${progressColor}`}
-          ></div>
-        </div>
+      <div className="relative h-2.5 bg-gray-200 dark:bg-gray-700">
+        <div
+          className={`absolute top-0 left-0 h-full rounded-full ${progressColor}`}
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
       {/* Card Footer */}
-      <div className="flex flex-1 items-center justify-between">
+      <div className="flex items-center justify-between bg-gray-100">
         <div
-          className="bg-gray-100 p-4 text-blue-500 cursor-pointer hover:text-blue-700"
+          className="p-4 text-blue-500 cursor-pointer hover:text-blue-700"
           onClick={() => onOpenModal(category.title, "addExpense")}
         >
           Add Expense
         </div>
         <div
-          className="bg-gray-100 p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-          onClick={() => onOpenModal(category.title, "viewExpense")} // Example for view expense functionality
+          className="p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+          onClick={() => onOpenModal(category.title, "viewExpense")}
         >
           View Expenses
         </div>
@@ -128,8 +154,10 @@ const Dashboard = () => {
 
   const [formData, setFormData] = useState({});
   const [fetchedData, setFetchedData] = useState({});
-
   const [editItemId, setEditItemId] = useState();
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const toggleModal = (category, modalType) => {
     setModalState({
@@ -137,6 +165,11 @@ const Dashboard = () => {
       selectedCategory: category,
       modalType: modalType,
     });
+  };
+
+  // Function to toggle isUpdated state variable
+  const toggleIsUpdated = () => {
+    setIsUpdated((prevIsUpdated) => !prevIsUpdated);
   };
 
   const handleChange = (e) => {
@@ -148,23 +181,66 @@ const Dashboard = () => {
   };
 
   // FETCH DATA
-  const fetchData = async () => {
-    try {
-      let url;
-      if (modalState.modalType === "viewExpense") {
-        url = modalState.selectedCategory
-          ? `http://localhost:3000/expenses/${modalState.selectedCategory}`
-          : "http://localhost:3000/expenses";
-      } else if (modalState.modalType === "viewIncome") {
-        url = "http://localhost:3000/income";
-      }
+  // Fetch data when the component mounts
+  useEffect(() => {
+    const fetchDataOnMount = async () => {
+      try {
+        const expensesUrl = "http://localhost:3000/expenses";
+        const incomeUrl = "http://localhost:3000/income";
 
+        const [expensesResponse, incomeResponse] = await Promise.all([
+          fetch(expensesUrl),
+          fetch(incomeUrl),
+        ]);
+
+        if (expensesResponse.ok && incomeResponse.ok) {
+          const [expensesData, incomeData] = await Promise.all([
+            expensesResponse.json(),
+            incomeResponse.json(),
+          ]);
+          setFetchedData((prevData) => ({
+            ...prevData, // Spread the previous data
+            ...expensesData, // Update the expenses data
+            ...incomeData, // Update the income data
+          }));
+
+          const totalExpenses = expensesData.expenses.reduce(
+            (total, expense) => total + parseFloat(expense.amount),
+            0
+          );
+          setTotalExpense(totalExpenses);
+
+          const totalIncome = incomeData.income.reduce(
+            (total, income) => total + parseFloat(income.amount),
+            0
+          );
+          setTotalIncome(totalIncome);
+        } else {
+          console.error(
+            "Failed to fetch data:",
+            expensesResponse.statusText,
+            incomeResponse.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchDataOnMount();
+  }, [isUpdated]);
+
+  // Normal Fetch
+  const fetchData = async (url) => {
+    try {
       const response = await fetch(url);
       if (response.ok) {
-        const fetchedData = await response.json();
-        setFetchedData(fetchedData);
-        setFormData(fetchedData);
-        console.log(fetchedData, "Fetched Data");
+        const data = await response.json();
+        setFetchedData((prevData) => ({
+          ...prevData,
+          ...data,
+        }));
+        console.log(fetchedData, "Inside fetchdata");
       } else {
         console.error("Failed to fetch data:", response.statusText);
       }
@@ -172,13 +248,22 @@ const Dashboard = () => {
       console.error("Error fetching data:", error);
     }
   };
+  // Fetch data when the selected category changes
   useEffect(() => {
-    // Call fetchData only for "viewIncome" or "viewExpense"
     if (
       modalState.modalType === "viewIncome" ||
-      modalState.modalType === "viewExpense"
+      modalState.modalType === "viewExpense" ||
+      isUpdated
     ) {
-      fetchData();
+      let url;
+      if (modalState.modalType === "viewIncome") {
+        url = "http://localhost:3000/income"; // URL for fetching income data
+      } else if (modalState.modalType === "viewExpense") {
+        url = modalState.selectedCategory
+          ? `http://localhost:3000/expenses/${modalState.selectedCategory}`
+          : "http://localhost:3000/expenses"; // URL for fetching expense data
+      }
+      fetchData(url);
     }
   }, [modalState.modalType, modalState.selectedCategory]);
 
@@ -213,7 +298,7 @@ const Dashboard = () => {
       let requestBody = {};
       let method = "";
 
-      console.log(formData, "inside submit", modalState.selectedCategory);
+      console.log(formData, "inside submit", editItemId);
 
       if (
         modalState.modalType === "addIncome" ||
@@ -242,11 +327,17 @@ const Dashboard = () => {
         url = `http://localhost:3000/${
           modalState.modalType === "viewIncome" ? "income" : "expenses"
         }/${editItemId}`;
-        requestBody = JSON.stringify({
-          name: formData.name,
-          amount: formData.amount,
-          category: formData.category,
-        });
+        requestBody =
+          modalState.modalType === "viewExpense"
+            ? JSON.stringify({
+                name: formData.name,
+                amount: formData.amount,
+                category: formData.category,
+              })
+            : JSON.stringify({
+                source: formData.source,
+                amount: formData.amount,
+              });
         method = "PUT";
       }
 
@@ -265,6 +356,9 @@ const Dashboard = () => {
           data
         );
 
+        // Call toggleIsUpdated to trigger a re-render
+        toggleIsUpdated();
+
         // Close modal and reset formData
         toggleModal("", "");
         setFormData({});
@@ -281,30 +375,13 @@ const Dashboard = () => {
       console.error("Error adding", modalState.modalType, ":", error);
     }
   };
-  useEffect(() => {
-    // Only add event listener when modal is open and modalType is "addIncome" or "addExpense"
-    if (
-      modalState.isOpen &&
-      (modalState.modalType === "addIncome" ||
-        modalState.modalType === "addExpense")
-    ) {
-      // window.addEventListener("submit", handleSubmit);
-      handleSubmit();
-    } else if (
-      modalState.isOpen &&
-      (modalState.modalType === "viewIncome" ||
-        modalState.modalType === "viewExpense")
-    ) {
-      // window.addEventListener("submit", handleSubmit);
-      handleSubmit();
-    }
-  }, [modalState.isOpen, modalState.modalType]); // Dependency array
 
   // DELETE DATA
   const handleDelete = async (data) => {
     try {
       const baseUrl = `http://localhost:3000`;
-      const endpoint = data.type === "income" ? "/income" : "/expenses";
+      const endpoint =
+        modalState.modalType === "viewIncome" ? "/income" : "/expenses";
       const url = `${baseUrl}${endpoint}/${data.id}`;
 
       console.log(data, "Handle Delete", modalState.modalType);
@@ -327,6 +404,8 @@ const Dashboard = () => {
             expenses: prevData.expenses.filter((item) => item.id !== data.id),
           }));
         }
+        // Call toggleIsUpdated to trigger a re-render
+        toggleIsUpdated();
       } else {
         console.error(`Failed to delete ${data.type}:`, response.statusText);
       }
@@ -335,6 +414,7 @@ const Dashboard = () => {
     }
   };
 
+  //EDIT DATA
   const handleEdit = (data) => {
     setEditItemId(data.id); // Set the ID of the item being edited
 
@@ -370,6 +450,8 @@ const Dashboard = () => {
               key={item.title}
               item={item}
               onOpenModal={toggleModal}
+              totalIncome={totalIncome}
+              totalExpense={totalExpense}
             />
           ))}
           <SavingsCard />
@@ -389,6 +471,7 @@ const Dashboard = () => {
               key={category.title}
               category={category}
               onOpenModal={toggleModal}
+              fetchedData={fetchedData.expenses}
             />
           ))}
         </div>

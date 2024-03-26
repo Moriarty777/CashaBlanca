@@ -23,9 +23,9 @@ export const navLinks = [
 ];
 
 export const categories = [
-  { title: "Grocery", progress: 72 },
-  { title: "Bills & Utilities", progress: 72 },
-  { title: "Other", progress: 72 },
+  { title: "Grocery", progress: 25 },
+  { title: "Bills & Utilities", progress: 69 },
+  { title: "Other", progress: 73 },
 ];
 
 export const summary = [
