@@ -13,11 +13,24 @@ const Modal = ({
   editItemId,
 }) => {
   // Check if fetchedData is an array and not empty
-  const isDataValid = {
-    expenses:
-      Array.isArray(fetchedData.expenses) && fetchedData.expenses.length > 0,
-    income: Array.isArray(fetchedData.income) && fetchedData.income.length > 0,
-  };
+  const isDataValid = fetchedData
+    ? {
+        expenses:
+          Array.isArray(fetchedData.expenses) &&
+          fetchedData.expenses.length > 0,
+        income:
+          Array.isArray(fetchedData.income) && fetchedData.income.length > 0,
+      }
+    : null;
+
+  // console.log(modalType, "Modal Type");
+
+  const imageOptions = [
+    { id: 1, url: "src/assets/images/goal_1.jpeg" },
+    { id: 2, url: "src/assets/images/goal_2.jpeg" },
+    { id: 3, url: "src/assets/images/goal_3.jpeg" },
+    { id: 4, url: "src/assets/images/goal_4.jpeg" },
+  ];
 
   return (
     <>
@@ -36,15 +49,17 @@ const Modal = ({
               {/* Modal header */}
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {modalType == "viewExpense"
+                  {modalType === "viewExpense"
                     ? selectedCategory
                       ? `Expense Details - ${selectedCategory}`
                       : "Expense Details"
-                    : modalType == "viewIncome"
+                    : modalType === "viewIncome"
                     ? "Income Details"
-                    : modalType == "addIncome"
+                    : modalType === "addIncome"
                     ? "Add Income"
-                    : `Add Expense - ${selectedCategory}`}
+                    : modalType === "addGoal"
+                    ? "Add Goal"
+                    : `Add Expense - ${selectedCategory}`}{" "}
                 </h3>
                 <button
                   type="button"
@@ -319,6 +334,111 @@ const Modal = ({
                   >
                     <Plus className="text-white font-semibold" />
                     Add Income
+                  </button>
+                </form>
+              )}
+
+              {/* Add Goals */}
+              {modalType === "addGoal" && (
+                <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                  <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="col-span-2">
+                      <label
+                        htmlFor="name"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Enter goal name"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="targetAmount"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Target Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="target_amount"
+                        id="target_amount"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Enter target amount"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="targetWeeks"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Target Weeks
+                      </label>
+                      <input
+                        type="number"
+                        name="target_weeks"
+                        id="target_weeks"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Enter target weeks"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="image"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Select Image
+                    </label>
+                    <div className="grid grid-cols-4 gap-4">
+                      {/* Render image tiles from imageOptions and handle selection */}
+                      {imageOptions.map((image) => (
+                        <div
+                          key={image.id}
+                          onClick={() =>
+                            handleChange({
+                              target: {
+                                name: "selectedImageId",
+                                value: image.id,
+                              },
+                            })
+                          }
+                          className="cursor-pointer"
+                        >
+                          <img
+                            src={image.url}
+                            alt=""
+                            className={`w-full h-auto rounded-lg ${
+                              formData.selectedImageId === image.id
+                                ? "border-4 border-blue-700"
+                                : ""
+                            }`}
+                            width={100}
+                            height={100}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <br />
+                  <button
+                    type="submit"
+                    className="text-white inline-flex items-center bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5"
+                  >
+                    <Plus className="text-white font-semibold" />
+                    Add Goal
                   </button>
                 </form>
               )}

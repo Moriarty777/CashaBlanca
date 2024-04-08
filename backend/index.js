@@ -79,6 +79,7 @@ app.delete("/income/:id", async (req, res) => {
 });
 
 // EXPENSES
+
 // GET Expenses by Category
 app.get("/expenses/:category", async (req, res) => {
   try {
@@ -209,6 +210,65 @@ app.delete("/expenses/:id", async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting expense:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// GOALS
+
+// GET all goals
+app.get("/goals", async (req, res) => {
+  try {
+    const result = await client.query("SELECT * FROM goals");
+    res.status(200).json({ goals: result.rows });
+  } catch (error) {
+    console.error("Error fetching goals:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST a new goal
+app.post("/goals", async (req, res) => {
+  const { name, target_amount, target_weeks } = req.body;
+  try {
+    const { rows } = await client.query(
+      "INSERT INTO goals (name, target_amount, target_weeks) VALUES ($1, $2, $3) RETURNING *",
+      [name, target_amount, target_weeks]
+    );
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    console.error("Error creating goal:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// PUT update an existing goal by ID
+app.put("/goals/:id", async (req, res) => {
+  const id = req.params.id;
+  const { name, targetAmount, targetWeeks } = req.body;
+  try {
+    const { rows } = await client.query(
+      "UPDATE goals SET name = $1, target_amount = $2, target_weeks = $3 WHERE id = $4 RETURNING *",
+      [name, targetAmount, targetWeeks, id]
+    );
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// DELETE an existing goal by ID
+app.delete("/goals/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const { rows } = await client.query(
+      "DELETE FROM goals WHERE id = $1 RETURNING *",
+      [id]
+    );
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error deleting goal:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
