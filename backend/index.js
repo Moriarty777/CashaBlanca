@@ -215,7 +215,6 @@ app.delete("/expenses/:id", async (req, res) => {
 });
 
 // GOALS
-
 // GET all goals
 app.get("/goals", async (req, res) => {
   try {
@@ -229,11 +228,11 @@ app.get("/goals", async (req, res) => {
 
 // POST a new goal
 app.post("/goals", async (req, res) => {
-  const { name, target_amount, target_weeks } = req.body;
+  const { name, target_amount, target_weeks, selectedImageId } = req.body;
   try {
     const { rows } = await client.query(
-      "INSERT INTO goals (name, target_amount, target_weeks) VALUES ($1, $2, $3) RETURNING *",
-      [name, target_amount, target_weeks]
+      "INSERT INTO goals (name, target_amount, target_weeks, selectedImageId) VALUES ($1, $2, $3, $4) RETURNING *",
+      [name, target_amount, target_weeks, selectedImageId]
     );
     res.status(201).json(rows[0]);
   } catch (error) {
@@ -245,13 +244,19 @@ app.post("/goals", async (req, res) => {
 // PUT update an existing goal by ID
 app.put("/goals/:id", async (req, res) => {
   const id = req.params.id;
-  const { name, targetAmount, targetWeeks } = req.body;
+  const { saved_amount } = req.body; // Expect only savedAmount in request body
+
   try {
     const { rows } = await client.query(
-      "UPDATE goals SET name = $1, target_amount = $2, target_weeks = $3 WHERE id = $4 RETURNING *",
-      [name, targetAmount, targetWeeks, id]
+      "UPDATE goals SET saved_amount = $1 WHERE id = $2 RETURNING *",
+      [saved_amount, id]
     );
-    res.json(rows[0]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Goal not found" });
+    }
+
+    res.json(rows[0]); // Return the updated goal data
   } catch (error) {
     console.error("Error updating goal:", error);
     res.status(500).json({ message: "Internal server error" });

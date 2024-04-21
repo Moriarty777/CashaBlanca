@@ -11,7 +11,7 @@ const SummaryCard = ({ item, onOpenModal, totalIncome, totalExpense }) => {
     Scale: <Scale className="text-teal-600 font-bold" />,
   };
 
-  console.log(totalIncome, totalExpense, "Summary Card");
+  // console.log(totalIncome, totalExpense, "Summary Card");
 
   return (
     <div
@@ -59,19 +59,29 @@ const SummaryCard = ({ item, onOpenModal, totalIncome, totalExpense }) => {
   );
 };
 
-const SavingsCard = () => {
+const SavingsCard = ({ goals }) => {
   // Implement logic and JSX for the savings card
+  const totalAmountSaved = goals.reduce(
+    (total, goal) => total + parseFloat(goal.saved_amount),
+    0
+  );
+  console.log(goals, "Saved Amount");
+
   return (
     <div className="group cursor-pointer relative flex w-1/4 flex-col items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-200 to-yellow-500 p-4 text-lg font-bold shadow-lg shadow-yellow-500 min-h-[24vh]">
       <div className="flex items-center gap-2">
         <PiggyBank className="text-pink-500 font-bold" />
         <div className="text-xl">Savings</div>
       </div>
-      <div className="text-center text-white font-bold text-xl">1600</div>
+      <div className="text-center text-white font-bold text-xl">
+        {totalAmountSaved}
+      </div>
       <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-150 scale-0 group-hover:scale-100">
-        <p className="text-sm">Laptop - $200 Saved</p>
-        <p className="text-sm">PS5 - $500 Saved</p>
-        <p className="text-sm">Switch - $900 Saved</p>
+        {goals.map((goal) => (
+          <p key={goal.id} className="text-sm">
+            {goal.name} - ${goal.saved_amount} Saved
+          </p>
+        ))}
       </div>
     </div>
   );
@@ -158,6 +168,7 @@ const Dashboard = () => {
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
   const [isUpdated, setIsUpdated] = useState(false);
+  const [goals, setGoals] = useState([]);
 
   const toggleModal = (category, modalType) => {
     setModalState({
@@ -227,7 +238,21 @@ const Dashboard = () => {
       }
     };
 
+    const fetchGoals = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/goals");
+        if (!response.ok) {
+          throw new Error("Failed to fetch goals data");
+        }
+        const data = await response.json();
+        setGoals(data.goals);
+      } catch (error) {
+        console.error("Error fetching goals data:", error);
+      }
+    };
+
     fetchDataOnMount();
+    fetchGoals();
   }, [isUpdated]);
 
   // Normal Fetch
@@ -454,7 +479,7 @@ const Dashboard = () => {
               totalExpense={totalExpense}
             />
           ))}
-          <SavingsCard />
+          <SavingsCard goals={goals} />
         </div>
 
         {/* Categories */}
@@ -476,7 +501,7 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="mt-20 flex flex-1 justify-center text-3xl font-bold">
+        {/* <div className="mt-20 flex flex-1 justify-center text-3xl font-bold">
           Goal Progress...
         </div>
 
@@ -502,19 +527,17 @@ const Dashboard = () => {
                 75%
               </span>
             </div>
-            {/* Progress Bar */}
             <div className="relative">
               <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                 <div className="h-2.5 w-[75%] rounded-full bg-green-400"></div>
               </div>
             </div>
-            {/* Placeholder for goal details */}
             <div className="flex flex-col px-4 py-2 gap-2">
               <p className="text-gray-600 text-sm">Target: $5000</p>
               <p className="text-gray-600 text-sm">Saved: $3750</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
       {/* Pass modal state and toggleModal function to Modal component */}
       {modalState.isOpen && (

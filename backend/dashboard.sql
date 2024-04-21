@@ -21,12 +21,14 @@ CREATE TABLE IF NOT EXISTS income (
     amount NUMERIC(10, 2) NOT NULL
 );
 
--- Create goals table
+-- -- Create goals table
 CREATE TABLE IF NOT EXISTS goals (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     target_amount NUMERIC(10, 2) NOT NULL,
-    target_weeks INTEGER NOT NULL
+    target_weeks INTEGER NOT NULL,
+    selectedImageId INTEGER,
+    saved_amount NUMERIC(10, 2)
 );
 
 

@@ -1,4 +1,5 @@
 import { Plus, XSquare, Pencil, Trash2 } from "lucide-react";
+import { imageOptions } from "../constants/index";
 
 const Modal = ({
   onClose,
@@ -24,13 +25,7 @@ const Modal = ({
     : null;
 
   // console.log(modalType, "Modal Type");
-
-  const imageOptions = [
-    { id: 1, url: "src/assets/images/goal_1.jpeg" },
-    { id: 2, url: "src/assets/images/goal_2.jpeg" },
-    { id: 3, url: "src/assets/images/goal_3.jpeg" },
-    { id: 4, url: "src/assets/images/goal_4.jpeg" },
-  ];
+  console.log(fetchedData.expenses, "Fecthed Data Modal");
 
   return (
     <>
@@ -59,7 +54,9 @@ const Modal = ({
                     ? "Add Income"
                     : modalType === "addGoal"
                     ? "Add Goal"
-                    : `Add Expense - ${selectedCategory}`}{" "}
+                    : modalType === "contribute"
+                    ? "Contribute to Goal"
+                    : `Add Expense - ${selectedCategory}`}
                 </h3>
                 <button
                   type="button"
@@ -76,60 +73,79 @@ const Modal = ({
                 isDataValid.expenses ? (
                   // Your logic when expenses are valid
                   <div className="p-4 md:p-5">
-                    {fetchedData.expenses.map((item) => (
-                      <div key={item.id} className="mb-4">
-                        <ul className="list-none p-0 m-0">
-                          <li className="flex justify-between items-center">
-                            <div className="text-lg font-semibold">
+                    <table className="border-collapse">
+                      <thead>
+                        <tr>
+                          <th className="text-left font-semibold w-full border border-gray-200 px-2">
+                            Name
+                          </th>
+                          <th className="text-left font-semibold w-full border border-gray-200 px-2">
+                            Amount
+                          </th>
+                          <th className="text-left font-semibold w-full border border-gray-200 px-2">
+                            {selectedCategory == null ? "Category" : "Actions"}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {fetchedData.expenses.map((item) => (
+                          <tr key={item.id}>
+                            <td className="py-4">
                               {editItemId === item.id ? (
                                 <input
                                   type="text"
                                   name="name"
                                   value={formData.name || ""}
                                   onChange={handleChange}
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                  className=" text-gray-900 text-sm"
                                   placeholder="Type product name"
                                   required
                                 />
                               ) : (
                                 item.name
                               )}
-                            </div>
-                            <div className="flex gap-2 items-center">
-                              <div className="text-gray-600 mr-4">
-                                {editItemId === item.id ? (
-                                  <input
-                                    type="number"
-                                    name="amount"
-                                    value={formData.amount || ""}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="$200"
-                                    required
-                                  />
-                                ) : (
-                                  `${item.amount} $`
-                                )}
-                              </div>
-                              <button
-                                type="button"
-                                className="text-blue-700 hover:underline"
-                                onClick={() => handleEdit(item)}
-                              >
-                                <Pencil />
-                              </button>
-                              <button
-                                type="button"
-                                className="text-red-700 hover:underline"
-                                onClick={() => handleDelete(item)}
-                              >
-                                <Trash2 />
-                              </button>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    ))}
+                            </td>
+                            <td className="py-4">
+                              {editItemId === item.id ? (
+                                <input
+                                  type="number"
+                                  name="amount"
+                                  value={formData.amount || ""}
+                                  onChange={handleChange}
+                                  className=" text-gray-900 text-sm"
+                                  placeholder="$200"
+                                  required
+                                />
+                              ) : (
+                                `${item.amount} $`
+                              )}
+                            </td>
+                            <td className="py-4 flex justify-start">
+                              {selectedCategory == null ? (
+                                item.category
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="text-blue-700 hover:underline mr-2"
+                                    onClick={() => handleEdit(item)}
+                                  >
+                                    <Pencil />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="text-red-700 hover:underline"
+                                    onClick={() => handleDelete(item)}
+                                  >
+                                    <Trash2 />
+                                  </button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                     {editItemId && (
                       <button
                         type="submit"
@@ -439,6 +455,53 @@ const Modal = ({
                   >
                     <Plus className="text-white font-semibold" />
                     Add Goal
+                  </button>
+                </form>
+              )}
+
+              {/* Contribute to Goal */}
+              {modalType === "contribute" && (
+                <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                  <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="col-span-1">
+                      <label
+                        htmlFor="balance"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Balance Available
+                      </label>
+                      <label
+                        htmlFor="balance_available"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        {fetchedData.balance ? fetchedData.balance : null}
+                      </label>
+                    </div>
+                    <div className="flex flex-col">
+                      <label
+                        htmlFor="amount"
+                        className="text-sm font-medium text-gray-900 dark:text-white mb-2"
+                      >
+                        Contribute to Goal
+                      </label>
+                      <input
+                        type="number"
+                        name="saved_amount"
+                        id="saved_amount"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Enter Amount"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="text-white inline-flex items-center bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5"
+                  >
+                    <Plus className="text-white font-semibold" />
+                    Contribute
                   </button>
                 </form>
               )}

@@ -23,15 +23,22 @@ export const navLinks = [
 ];
 
 export const categories = [
-  { title: "Grocery", progress: 25 },
-  { title: "Bills & Utilities", progress: 69 },
-  { title: "Other", progress: 73 },
+  { title: "Grocery" },
+  { title: "Bills & Utilities" },
+  { title: "Other" },
 ];
 
 export const summary = [
-  { title: "Income", iconName: "TrendingUp", amount: 1000 },
-  { title: "Expense", iconName: "TrendingDown", amount: 300 },
-  { title: "Balance", iconName: "Scale", amount: 700 },
+  { title: "Income", iconName: "TrendingUp" },
+  { title: "Expense", iconName: "TrendingDown" },
+  { title: "Balance", iconName: "Scale" },
+];
+
+export const imageOptions = [
+  { id: 1, url: "src/assets/images/goal_1.jpeg" },
+  { id: 2, url: "src/assets/images/goal_2.jpeg" },
+  { id: 3, url: "src/assets/images/goal_3.jpeg" },
+  { id: 4, url: "src/assets/images/goal_4.jpeg" },
 ];
 
 export const questions = [
