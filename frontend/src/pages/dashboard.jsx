@@ -77,17 +77,24 @@ const SavingsCard = ({ goals }) => {
         {totalAmountSaved}
       </div>
       <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded-md shadow-md text-white bg-gray-800 text-xs font-bold transition-all duration-150 scale-0 group-hover:scale-100">
-        {goals.map((goal) => (
-          <p key={goal.id} className="text-sm">
-            {goal.name} - ${goal.saved_amount} Saved
-          </p>
-        ))}
+        {goals === true
+          ? goals.map((goal) => (
+              <p key={goal.id} className="text-sm">
+                {goal.name} - ${goal.saved_amount} Saved
+              </p>
+            ))
+          : "No Savings"}
       </div>
     </div>
   );
 };
 
-const CategoryCard = ({ category, onOpenModal, fetchedData }) => {
+const CategoryCard = ({
+  category,
+  onOpenModal,
+  fetchedData,
+  toggleIsUpdated,
+}) => {
   // Calculate total amount spent for the category
   const categoryExpenses =
     Array.isArray(fetchedData) && fetchedData.length > 0
@@ -105,6 +112,8 @@ const CategoryCard = ({ category, onOpenModal, fetchedData }) => {
   // Calculate progress percentage
   const totalBudget = 100; // Assume total budget
   const progress = Math.round((totalAmountSpent / totalBudget) * 100);
+
+  console.log(progress, "Progress Bar", totalAmountSpent);
 
   // Determine progress color based on progress value
   const getProgressColor = (progress) => {
@@ -146,7 +155,10 @@ const CategoryCard = ({ category, onOpenModal, fetchedData }) => {
         </div>
         <div
           className="p-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-          onClick={() => onOpenModal(category.title, "viewExpense")}
+          onClick={() => {
+            onOpenModal(category.title, "viewExpense");
+            toggleIsUpdated();
+          }}
         >
           View Expenses
         </div>
@@ -497,47 +509,10 @@ const Dashboard = () => {
               category={category}
               onOpenModal={toggleModal}
               fetchedData={fetchedData.expenses}
+              toggleIsUpdated={toggleIsUpdated}
             />
           ))}
         </div>
-
-        {/* <div className="mt-20 flex flex-1 justify-center text-3xl font-bold">
-          Goal Progress...
-        </div>
-
-        <div className="flex flex-1 justify-center items-center mx-10">
-          <div className="my-10 max-w-sm overflow-hidden rounded-xl bg-gray-100 shadow-lg">
-            <div>
-              <img src="https://shorturl.at/ctM27" alt="" className="" />
-            </div>
-
-            <div className="flex items-end justify-between bg-slate-100 p-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-7 w-7 text-green-500"
-              >
-                <path d="M9 17a1 1 0 000-2h6a1 1 0 000 2H9zM17 1a1 1 0 011 1v2h-2V1zM10 15a1 1 0 01-1-1H4a1 1 0 011-1h6a1 1 0 011 1zM17 11a1 1 0 011 1v2h-2v-2z" />
-              </svg>
-              <h2 className="text-xl font-semibold text-gray-800">
-                Travel Fund
-              </h2>
-              <span className="text-sm font-medium text-blue-700 dark:text-white">
-                75%
-              </span>
-            </div>
-            <div className="relative">
-              <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                <div className="h-2.5 w-[75%] rounded-full bg-green-400"></div>
-              </div>
-            </div>
-            <div className="flex flex-col px-4 py-2 gap-2">
-              <p className="text-gray-600 text-sm">Target: $5000</p>
-              <p className="text-gray-600 text-sm">Saved: $3750</p>
-            </div>
-          </div>
-        </div> */}
       </section>
       {/* Pass modal state and toggleModal function to Modal component */}
       {modalState.isOpen && (

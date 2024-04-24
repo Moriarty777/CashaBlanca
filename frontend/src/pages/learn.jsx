@@ -1,42 +1,54 @@
 import { useState } from "react";
-import { questions, facts } from "../constants/index";
 import Icon from "../components/Icon";
 import ReactPlayer from "react-player/youtube";
+import { facts, financialKnowledgeCategories } from "../constants/index";
+
+const CategoryCard = ({
+  title,
+  content,
+  gradient,
+  shadowColor,
+  buttonColor,
+  toggleModal,
+}) => {
+  return (
+    <div className="flex items-center justify-center bg-slate-100">
+      <div className="group h-96 w-80 [perspective:1000px]">
+        <div
+          className={`relative h-full w-full rounded-xl shadow-xl ${shadowColor} transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] bg-gradient-to-r ${gradient}`}
+        >
+          <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
+            <div className="text-2xl font-bold text-white">{title}</div>
+          </div>
+          <div className="absolute inset-0 h-full w-full rounded-xl bg-black/30 px-7 text-center text-slate-200 [transform:rotateY(180deg)] [backface-visibility:hidden]">
+            <div className="flex min-h-full flex-col items-center justify-center">
+              <ol className="text-lg font-semibold">
+                {content.map((item) => (
+                  <>
+                    <li key={item}>{item}</li>
+                    <br />
+                  </>
+                ))}
+              </ol>
+              <br />
+              <button
+                className={`mt-2 rounded-md bg-${buttonColor} px-2 py-1 text-sm hover:bg-${buttonColor.replace(
+                  "[",
+                  ""
+                )}-300`}
+                onClick={toggleModal}
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Learn = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [score, setScore] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleAnswerSelect = (selectedAnswer) => {
-    if (submitted) return;
-
-    const isCorrect =
-      selectedAnswer === questions[currentQuestion].correctAnswer;
-    setUserAnswers([
-      ...userAnswers,
-      { questionId: questions[currentQuestion].id, isCorrect, selectedAnswer },
-    ]);
-    if (isCorrect) setScore(score + 1);
-    setSubmitted(true);
-
-    console.log(userAnswers);
-  };
-
-  const nextQuestion = () => {
-    setCurrentQuestion(currentQuestion + 1);
-    setUserAnswers([]);
-    setSubmitted(false);
-  };
-
-  const restartQuiz = () => {
-    setCurrentQuestion(0);
-    setUserAnswers([]);
-    setScore(0);
-    setSubmitted(false);
-  };
-
   // facts
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
@@ -100,10 +112,10 @@ const Learn = () => {
           <h1 className="text-4xl font-bold mb-4">Welcome to the Learn Page</h1>
           <p className="text-lg">
             Discover the essentials of personal finance with our Learn page.
-            From budgeting basics to investment insights, we've got you covered.
-            Dive into quizzes, explore interactive tools, and stay updated with
-            interesting financial facts. Empower yourself for a secure financial
-            future.
+            From budgeting basics to investment insights, we&aposve got you
+            covered. Dive into quizzes, explore interactive tools, and stay
+            updated with interesting financial facts. Empower yourself for a
+            secure financial future.
           </p>
         </section>
 
@@ -111,141 +123,17 @@ const Learn = () => {
 
         {/* Categories of Financial Knowledge */}
         <section className="mb-10 mt-8">
-          <h2 className="text-4xl font-bold mb-4 text-center">
+          <h2 className="text-4xl font-bold mb-6 text-center">
             Categories of Financial Knowledge
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Budgeting Card */}
-
-            <div className="flex items-center justify-center bg-slate-100">
-              <div className="group h-96 w-80 [perspective:1000px]">
-                <div className="relative h-full w-full rounded-xl shadow-xl shadow-blue-400 transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] bg-gradient-to-r from-[#64b5f6] to-[#1976d2]">
-                  <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
-                    <div className="text-2xl font-bold text-white">
-                      Budgeting
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/30 px-7 text-center text-slate-200 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <div className="flex min-h-full flex-col items-center justify-center">
-                      <ol className="text-lg font-semibold">
-                        <li>Basics of creating a budget</li>
-                        <br />
-                        <li>Tips for effective budgeting</li>
-                        <br />
-                        <li>Common budgeting mistakes and how to avoid them</li>
-                      </ol>
-                      <br />
-                      <button
-                        className="mt-2 rounded-md bg-[#1976d2] px-2 py-1 text-sm hover:bg-blue-300 "
-                        onClick={toggleModal}
-                      >
-                        Learn More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Saving Card */}
-            <div className="flex items-center justify-center bg-slate-100">
-              <div className="group h-96 w-80 [perspective:1000px]">
-                <div
-                  className="relative h-full w-full rounded-xl shadow-xl shadow-green-600 transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"
-                  style={{
-                    background: "linear-gradient(to right, #81c784 , #2e7d32)",
-                  }}
-                >
-                  <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
-                    <div className="text-2xl font-bold text-white">Saving</div>
-                  </div>
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/30 px-7 text-center text-slate-200 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <div className="flex min-h-full flex-col items-center justify-center">
-                      <ol className="text-lg font-semibold">
-                        <li>Importance of saving.</li>
-                        <br />
-                        <li>Different types of savings accounts.</li>
-                        <br />
-                        <li>Tips for building an emergency fund.</li>
-                      </ol>
-                      <br />
-                      <button className="mt-2 rounded-md bg-[#2e7d32] px-2 py-1 text-sm hover:bg-green-400">
-                        Learn More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Investing Card */}
-            <div className="flex items-center justify-center bg-slate-100">
-              <div className="group h-96 w-80 [perspective:1000px]">
-                <div
-                  className="relative h-full w-full rounded-xl shadow-xl shadow-orange-400 transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"
-                  style={{
-                    background: "linear-gradient(to right, #ffcc80, #ef6c00)",
-                  }}
-                >
-                  <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
-                    <div className="text-2xl font-bold text-white">
-                      Investing
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/30 px-7 text-center text-slate-200 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <div className="flex min-h-full flex-col items-center justify-center">
-                      <ol className="text-lg font-semibold">
-                        <li>Introduction to investing.</li>
-                        <br />
-                        <li>
-                          Types of investments (stocks, bonds, mutual funds,
-                          etc.).
-                        </li>
-                        <br />
-                        <li>Risk and return in investing.</li>
-                      </ol>
-                      <br />
-                      <button className="mt-2 rounded-md bg-[#ef6c00] px-2 py-1 text-sm hover:bg-orange-300">
-                        Learn More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Credit and Debt Card */}
-            <div className="flex items-center justify-center bg-slate-100">
-              <div className="group h-96 w-80 [perspective:1000px]">
-                <div
-                  className="relative h-full w-full rounded-xl shadow-xl shadow-indigo-400 transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"
-                  style={{
-                    background: "linear-gradient(to right, #9575cd, #512da8)",
-                  }}
-                >
-                  <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
-                    <div className="text-2xl font-bold text-white">
-                      Credit & Debit Card
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/30 px-7 text-center text-slate-200 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <div className="flex min-h-full flex-col items-center justify-center">
-                      <ol className="text-lg font-semibold">
-                        <li>Understanding credit scores.</li>
-                        <br />
-                        <li>Managing and reducing debt.</li>
-                        <br />
-                        <li>Credit card tips.</li>
-                      </ol>
-                      <br />
-                      <button className="mt-2 rounded-md bg-[#512da8] px-2 py-1 text-sm hover:bg-indigo-300">
-                        Learn More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {financialKnowledgeCategories.map((category) => (
+              <CategoryCard
+                key={category.title}
+                {...category}
+                toggleModal={toggleModal}
+              />
+            ))}
           </div>
         </section>
 
@@ -484,60 +372,6 @@ const Learn = () => {
         </div>
       )}
     </>
-
-    // Quiz
-    // <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    //   <div className="bg-white p-8 rounded-lg shadow-md w-96">
-    //     {currentQuestion < questions.length ? (
-    //       <div>
-    //         <h2 className="text-xl font-semibold mb-4">Question {currentQuestion + 1}</h2>
-    //         <p className="text-lg mb-4">{questions[currentQuestion].question}</p>
-    //         <ul className="space-y-2">
-    //           {questions[currentQuestion].options.map((option, index) => (
-    //             <li
-    //               key={index}
-    //               onClick={() => handleAnswerSelect(option)}
-    //               className={`cursor-pointer p-2 rounded-md ${
-    //                 submitted && option === questions[currentQuestion].correctAnswer
-    //                   ? 'bg-green-500'
-    //                   : submitted && userAnswers[0].selectedAnswer === option
-    //                   ? 'bg-red-500'
-    //                   : ''}
-    //                 hover:bg-blue-200`}
-
-    //             >
-    //               {option}
-    //             </li>
-    //           ))}
-    //         </ul>
-    //         {submitted && (
-    //           <div>
-    //             <p className="mt-4">
-    //               Your answer is {userAnswers[0].isCorrect ? 'correct' : 'incorrect'}.
-    //             </p>
-    //             <button
-    //               onClick={nextQuestion}
-    //               className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-    //             >
-    //               Next Question
-    //             </button>
-    //           </div>
-    //         )}
-    //       </div>
-    //     ) : (
-    //       <div className="text-center">
-    //         <h2 className="text-xl font-semibold mb-4">Quiz Completed!</h2>
-    //         <p className="text-lg mb-4">Your Score: {score}</p>
-    //         <button
-    //           onClick={restartQuiz}
-    //           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-    //         >
-    //           Restart Quiz
-    //         </button>
-    //       </div>
-    //     )}
-    //   </div>
-    // </div>
   );
 };
 

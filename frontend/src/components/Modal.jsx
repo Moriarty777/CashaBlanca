@@ -88,62 +88,68 @@ const Modal = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {fetchedData.expenses.map((item) => (
-                          <tr key={item.id}>
-                            <td className="py-4">
-                              {editItemId === item.id ? (
-                                <input
-                                  type="text"
-                                  name="name"
-                                  value={formData.name || ""}
-                                  onChange={handleChange}
-                                  className=" text-gray-900 text-sm"
-                                  placeholder="Type product name"
-                                  required
-                                />
-                              ) : (
-                                item.name
-                              )}
-                            </td>
-                            <td className="py-4">
-                              {editItemId === item.id ? (
-                                <input
-                                  type="number"
-                                  name="amount"
-                                  value={formData.amount || ""}
-                                  onChange={handleChange}
-                                  className=" text-gray-900 text-sm"
-                                  placeholder="$200"
-                                  required
-                                />
-                              ) : (
-                                `${item.amount} $`
-                              )}
-                            </td>
-                            <td className="py-4 flex justify-start">
-                              {selectedCategory == null ? (
-                                item.category
-                              ) : (
-                                <>
-                                  <button
-                                    type="button"
-                                    className="text-blue-700 hover:underline mr-2"
-                                    onClick={() => handleEdit(item)}
-                                  >
-                                    <Pencil />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="text-red-700 hover:underline"
-                                    onClick={() => handleDelete(item)}
-                                  >
-                                    <Trash2 />
-                                  </button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                        {fetchedData.expenses
+                          .filter(
+                            (item) =>
+                              selectedCategory === null ||
+                              item.category === selectedCategory
+                          )
+                          .map((item) => (
+                            <tr key={item.id}>
+                              <td className="py-4">
+                                {editItemId === item.id ? (
+                                  <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name || ""}
+                                    onChange={handleChange}
+                                    className=" text-gray-900 text-sm"
+                                    placeholder="Type product name"
+                                    required
+                                  />
+                                ) : (
+                                  item.name
+                                )}
+                              </td>
+                              <td className="py-4">
+                                {editItemId === item.id ? (
+                                  <input
+                                    type="number"
+                                    name="amount"
+                                    value={formData.amount || ""}
+                                    onChange={handleChange}
+                                    className=" text-gray-900 text-sm"
+                                    placeholder="$200"
+                                    required
+                                  />
+                                ) : (
+                                  `${item.amount} $`
+                                )}
+                              </td>
+                              <td className="py-4 flex justify-start">
+                                {selectedCategory == null ? (
+                                  item.category
+                                ) : (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="text-blue-700 hover:underline mr-2"
+                                      onClick={() => handleEdit(item)}
+                                    >
+                                      <Pencil />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="text-red-700 hover:underline"
+                                      onClick={() => handleDelete(item)}
+                                    >
+                                      <Trash2 />
+                                    </button>
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                     {editItemId && (

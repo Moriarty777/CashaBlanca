@@ -41,6 +41,96 @@ export const imageOptions = [
   { id: 4, url: "src/assets/images/goal_4.jpeg" },
 ];
 
+export const financialKnowledgeCategories = [
+  {
+    title: "Budgeting",
+    content: [
+      "Basics of creating a budget",
+      "Tips for effective budgeting",
+      "Common budgeting mistakes and how to avoid them",
+    ],
+    gradient: "from-[#64b5f6] to-[#1976d2]",
+    shadowColor: "shadow-blue-400",
+    buttonColor: "[#1976d2]",
+  },
+  {
+    title: "Saving",
+    content: [
+      "Importance of saving.",
+      "Different types of savings accounts.",
+      "Tips for building an emergency fund.",
+    ],
+    gradient: "from-[#81c784] to-[#2e7d32]",
+    shadowColor: "shadow-green-600",
+    buttonColor: "[#2e7d32]",
+  },
+  {
+    title: "Investing",
+    content: [
+      "Introduction to investing.",
+      "Types of investments (stocks, bonds, mutual funds,etc.).",
+      "Risk and return in investing.",
+    ],
+    gradient: "from-[#ffcc80] to-[#ef6c00]",
+    shadowColor: "shadow-orange-400",
+    buttonColor: "[#ef6c00]",
+  },
+  {
+    title: "Budgeting",
+    content: [
+      "Understanding credit scores.",
+      "Managing and reducing debt.",
+      "Credit card tips.",
+    ],
+    gradient: "from-[#9575cd] to-[#512da8]",
+    shadowColor: "shadow-indigo-400",
+    buttonColor: "[#512da8]",
+  },
+];
+
+// export const categoryData = {
+//   budgeting: {
+//     title: "Budgeting",
+//     content: [
+//       <>
+//         <p>
+//           Budgeting is the process of creating a plan for how you will spend
+//           your money. It helps you track your income and expenses, and make sure
+//           you&aposre not spending more than you earn.
+//         </p>
+
+//         <ol>
+//           <li>
+//             <a
+//               href="https://www.nerdwallet.com/article/finance/how-to-budget"
+//               rel="noreferrer"
+//               target="_blank"
+//               className="hover:text-blue-200"
+//             >
+//               Learn more about budgeting basics
+//             </a>
+//           </li>
+//           <li>
+//             <a
+//               href="https://n26.com/en-eu/blog/budgeting-tips"
+//               rel="noreferrer"
+//               target="_blank"
+//               className="hover:text-blue-200"
+//             >
+//               Tips for effective budgeting
+//             </a>
+//           </li>
+//         </ol>
+//       </>,
+//     ],
+//     gradient: "from-[#64b5f6] to-[#1976d2]", // Gradient for budgeting
+//   },
+//   saving: {
+//     // ... data for saving category
+//   },
+//   // ... data for other categories
+// };
+
 export const questions = [
   {
     id: 1,
