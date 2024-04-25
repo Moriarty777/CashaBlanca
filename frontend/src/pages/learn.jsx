@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Icon from "../components/Icon";
 import ReactPlayer from "react-player/youtube";
-import { facts, financialKnowledgeCategories } from "../constants/index";
+import {
+  facts,
+  financialKnowledgeCategories,
+  categoryData,
+} from "../constants/index";
 
 const CategoryCard = ({
   title,
@@ -32,11 +36,8 @@ const CategoryCard = ({
               </ol>
               <br />
               <button
-                className={`mt-2 rounded-md bg-${buttonColor} px-2 py-1 text-sm hover:bg-${buttonColor.replace(
-                  "[",
-                  ""
-                )}-300`}
-                onClick={toggleModal}
+                className={`mt-2 rounded-md bg-${buttonColor} px-2 py-1 text-sm hover:bg-gray-400`}
+                onClick={() => toggleModal(title)}
               >
                 Learn More
               </button>
@@ -68,10 +69,14 @@ const Learn = () => {
 
   //modal logic
   const [isModalOpen, setModalOpen] = useState(false);
+  const [category, setCategory] = useState("");
 
-  const toggleModal = () => {
+  const toggleModal = (category) => {
     setModalOpen(!isModalOpen);
+    setCategory(category);
   };
+
+  const selectedCategoryData = categoryData[category];
 
   //Calculator
   const [amount, setAmount] = useState("");
@@ -280,8 +285,7 @@ const Learn = () => {
       </div>
 
       {/* modal logic */}
-
-      {isModalOpen && (
+      {isModalOpen && selectedCategoryData && (
         <div>
           {/* OverlLay */}
           <div
@@ -297,15 +301,12 @@ const Learn = () => {
             <div className="relative p-4 w-full max-w-2xl max-h-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               {/* Modal content */}
               <div
-                className="relative rounded-lg shadow dark:bg-gray-700"
-                style={{
-                  background: "linear-gradient(to right, #64b5f6, #1976d2)",
-                }}
+                className={`relative rounded-lg shadow dark:bg-gray-700 bg-gradient-to-r ${selectedCategoryData.gradient}`}
               >
                 {/* Modal header */}
                 <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                   <h1 className="text-2xl font-semibold text-white dark:text-white justify-center ml-[50px]">
-                    Budgeting
+                    {selectedCategoryData.title}
                   </h1>
                   <button
                     type="button"
@@ -334,36 +335,31 @@ const Learn = () => {
                 <div className="flex flex-col p-4 text-white">
                   <div className="shadow-xl">
                     <ReactPlayer
-                      url="https://www.youtube.com/embed/ZrsWh7Bo97A"
+                      url={selectedCategoryData.url}
                       controls
                       width="100%"
                     />
                   </div>
                   <h2 className="mt-6 text-xl font-semibold ml-4">More Info</h2>
                   <ol className="ml-7 mt-4 mb-2 list-disc">
-                    <li>
-                      <a
-                        href="https://www.nerdwallet.com/article/finance/how-to-budget"
-                        rel="noreferrer"
-                        target="_blank"
-                        className="hover:text-blue-200"
-                      >
-                        {/* <img src="article-icon.svg" alt="Article" className="mr-2" /> */}
-                        Learn more about budgeting basics
-                      </a>
-                    </li>
-                    <br />
-                    <li>
-                      <a
-                        href="https://n26.com/en-eu/blog/budgeting-tips"
-                        rel="noreferrer"
-                        target="_blank"
-                        className="hover:text-blue-200"
-                      >
-                        {/* <img src="video-icon.svg" alt="Video" className="mr-2" /> */}
-                        Tips for effective budgeting
-                      </a>
-                    </li>
+                    {selectedCategoryData.href &&
+                      Object.entries(selectedCategoryData.href).map(
+                        ([text, link]) => (
+                          <>
+                            <li key={text}>
+                              <a
+                                href={link}
+                                rel="noreferrer"
+                                target="_blank"
+                                className="hover:text-blue-200"
+                              >
+                                {text}
+                              </a>
+                            </li>
+                            <br />
+                          </>
+                        )
+                      )}
                   </ol>
                 </div>
               </div>

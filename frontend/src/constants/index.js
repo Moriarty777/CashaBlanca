@@ -76,7 +76,7 @@ export const financialKnowledgeCategories = [
     buttonColor: "[#ef6c00]",
   },
   {
-    title: "Budgeting",
+    title: "Credit & Debit Card",
     content: [
       "Understanding credit scores.",
       "Managing and reducing debt.",
@@ -88,48 +88,52 @@ export const financialKnowledgeCategories = [
   },
 ];
 
-// export const categoryData = {
-//   budgeting: {
-//     title: "Budgeting",
-//     content: [
-//       <>
-//         <p>
-//           Budgeting is the process of creating a plan for how you will spend
-//           your money. It helps you track your income and expenses, and make sure
-//           you&aposre not spending more than you earn.
-//         </p>
-
-//         <ol>
-//           <li>
-//             <a
-//               href="https://www.nerdwallet.com/article/finance/how-to-budget"
-//               rel="noreferrer"
-//               target="_blank"
-//               className="hover:text-blue-200"
-//             >
-//               Learn more about budgeting basics
-//             </a>
-//           </li>
-//           <li>
-//             <a
-//               href="https://n26.com/en-eu/blog/budgeting-tips"
-//               rel="noreferrer"
-//               target="_blank"
-//               className="hover:text-blue-200"
-//             >
-//               Tips for effective budgeting
-//             </a>
-//           </li>
-//         </ol>
-//       </>,
-//     ],
-//     gradient: "from-[#64b5f6] to-[#1976d2]", // Gradient for budgeting
-//   },
-//   saving: {
-//     // ... data for saving category
-//   },
-//   // ... data for other categories
-// };
+export const categoryData = {
+  Budgeting: {
+    title: "Budgeting",
+    url: "https://www.youtube.com/watch?v=NxvjOqUj0UY",
+    href: {
+      "Learn more about budgeting basics":
+        "https://www.nerdwallet.com/article/finance/how-to-budget",
+      "Tips for effective budgeting":
+        "https://n26.com/en-eu/blog/budgeting-tips",
+    },
+    gradient: "from-[#64b5f6] to-[#1976d2]",
+  },
+  Saving: {
+    title: "Saving",
+    url: "https://www.youtube.com/watch?v=IIKr2915l2g",
+    href: {
+      "50 Ways to Save Money":
+        "https://moneyning.com/frugality/50-ways-to-save-money-on-things-you-thought-you-could-never-save-on/",
+      "10 Best Ways to Save Money":
+        "https://www.regions.com/insights/personal/personal-finances/budgeting-and-saving/how-to-save-money-4-smart-savings-tips",
+    },
+    gradient: "from-[#81c784] to-[#2e7d32]",
+  },
+  Investing: {
+    title: "Investing",
+    url: "https://www.youtube.com/watch?app=desktop&v=ZCFkWDdmXG8",
+    href: {
+      "How to Invest in Stocks: A Beginner’s Guide":
+        "https://www.investopedia.com/articles/basics/06/invest1000.asp",
+      "8 Common Investing Mistakes to Avoid":
+        "https://www.investopedia.com/articles/stocks/07/beat_the_mistakes.asp",
+    },
+    gradient: "from-[#ffcc80] to-[#ef6c00]",
+  },
+  "Credit & Debit Card": {
+    title: "Credit & Debit Card",
+    url: "https://www.youtube.com/watch?v=T3wxogO1nYU",
+    href: {
+      "Credit Cards vs. Debit Cards: What’s the Difference?":
+        "https://www.investopedia.com/articles/personal-finance/050214/credit-vs-debit-cards-which-better.asp",
+      "Can You Build Credit With a Debit Card?":
+        "https://www.experian.com/blogs/ask-experian/can-you-build-credit-debit-card/",
+    },
+    gradient: "from-[#9575cd] to-[#512da8]",
+  },
+};
 
 export const questions = [
   {
